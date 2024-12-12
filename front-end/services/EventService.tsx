@@ -51,4 +51,23 @@ const getEventById = async (id: number) => {
   return result.json();
 };
 
-export default { getAllEvents, addEvent, editEvent, getEventById };
+const deleteEvent = async (id: number) => {
+  const user = sessionStorage.getItem("loggedInUser");
+  const token = user ? JSON.parse(user).token : null;
+  const result = await fetch(
+    process.env.NEXT_PUBLIC_API_URL + `/events/${id}`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  if (!result.ok) {
+    throw new Error("Unable to delete event.");
+  }
+  return result.json();
+};
+
+export default { getAllEvents, addEvent, editEvent, getEventById, deleteEvent };

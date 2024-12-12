@@ -47,6 +47,14 @@ const EditEventForm: React.FC<Prop> = ({ event }: Prop) => {
     return newErrors;
   };
 
+  const handleDelete = async () => {
+    if (event.id) EventService.deleteEvent(event.id);
+
+    setTimeout(() => {
+      router.push("/events");
+    }, 500);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
@@ -219,9 +227,18 @@ const EditEventForm: React.FC<Prop> = ({ event }: Prop) => {
             <p className={styles.error}>{errors.categoryDescription}</p>
           )}
         </div>
-        <button type="submit" className={styles.button}>
-          Save
-        </button>
+        <p>
+          <button type="submit" className={styles.button}>
+            Save
+          </button>
+          <button
+            type="button"
+            className={styles.deleteButton}
+            onClick={handleDelete}
+          >
+            Delete
+          </button>
+        </p>
       </form>
     </>
   );
