@@ -109,10 +109,40 @@ const getEvents = async (): Promise<Event[]> => {
     }
 };
 
+const joinEvent = async (eventId: number, profileId: number) => {
+    try {
+        await database.profileEvent.create({
+            data: {
+                eventId,
+                profileId,
+            },
+        });
+    } catch (error) {
+        console.log(error);
+        throw new Error('Database Error, see server log for more detail');
+    }
+}
+
+const getEventParticipants = async (eventId: number): Promise<number> => {
+    try {
+        const participants = await database.profileEvent.count({
+            where: {
+                eventId: eventId,
+            },
+        });
+        return participants;
+    } catch (error) {
+        console.log(error);
+        throw new Error('Database Error, see server log for more detail');
+    }
+}
+
 export default {
     addEvent,
     getEventById,
     deleteEventById,
     editEvent,
     getEvents,
+    joinEvent,
+    getEventParticipants,
 };

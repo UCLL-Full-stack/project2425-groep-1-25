@@ -51,4 +51,21 @@ const authenicate = async ({
         throw new Error(`Error: ${error}`);
     }
 };
-export default { getAllUsers, createUser, authenicate, getUserByUserName };
+
+const getProfileIdByUserName = async (userName: string): Promise<number> => {
+    const user = await userDb.getUserByUsername(userName);
+
+    if (!user) {
+        throw new Error('User not found');
+    }
+
+    const profile = await userDb.getProfileByUserId(user.getId());
+
+    if (!profile) {
+        throw new Error('Profile not found');
+    }
+
+    return profile.id;
+};
+
+export default { getAllUsers, createUser, authenicate, getUserByUserName, getProfileIdByUserName };

@@ -5,6 +5,8 @@ import locationService from './location.service';
 import categoryService from './category.service';
 import { Category } from '../model/category';
 import { Location } from '../model/location';
+import { join } from 'path';
+import { get } from 'http';
 
 const addEvent = async ({
     name,
@@ -88,10 +90,36 @@ const getEventById = async (id: number): Promise<Event> => {
 
 const getEvents = (): Promise<Event[]> => eventDb.getEvents();
 
+const joinEvent = async (eventId: number, userId: number) => {
+    try {
+        const event = await eventDb.getEventById(eventId);
+        if (!event) {
+            throw new Error(`No event with id ${eventId} found.`);
+        }
+        return await eventDb.joinEvent(eventId, userId);
+    } catch (error) {
+        throw new Error(`Error: ${error}`);
+    }
+};
+
+const getEventParticipants = async (eventId: number) => {
+    try {
+        const event = await eventDb.getEventById(eventId);
+        if (!event) {
+            throw new Error(`No event with id ${eventId} found.`);
+        }
+        return await eventDb.getEventParticipants(eventId);
+    } catch (error) {
+        throw new Error(`Error: ${error}`);
+    }
+};
+
 export default {
     addEvent,
     deleteEvent,
     editEvent,
     getEventById,
     getEvents,
+    joinEvent,
+    getEventParticipants,
 };

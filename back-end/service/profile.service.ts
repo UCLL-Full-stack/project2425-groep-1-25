@@ -27,4 +27,14 @@ const completeProfile = async (userName: string, profileInput: ProfileInput) => 
     });
     return await profileDb.addProfile(user.getId(), profile);
 };
-export default { completeProfile };
+
+const getEventsByProfile = async (id: number) => {
+    return await profileDb.getEventsByProfile(id);
+}
+
+const getEventsByUserName = async (userName: string) => {
+    const user = await userService.getUserByUserName({ userName });
+    return await profileDb.getEventsByProfile(user.getId());
+}
+
+export default { completeProfile, getEventsByProfile, getEventsByUserName };

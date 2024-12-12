@@ -8,6 +8,8 @@ import Header from "@/components/header";
 import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
+import useSWR from "swr";
+import ProfileService from "@/services/ProfileService";
 
 const EventDetails: React.FC = () => {
   const router = useRouter();
@@ -38,8 +40,20 @@ const EventDetails: React.FC = () => {
     }
   }, [isUserLoaded, id]);
   const handleOnClick = () => {
-    console.log("still need to handle the participate");
+    if (!loggedInUser) {
+      throw new Error("User not logged in");
+    }
+    EventService.joinEvent(Number(id))
+      .then(() => {
+        router.push("/events");
+      })
+      .catch((error: Error) => {
+        console.error(error);
+      }
+      );
   };
+
+
 
   const handleEdit = () => {
     router.push(`edit/${id}`);

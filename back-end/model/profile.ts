@@ -49,6 +49,11 @@ export class Profile {
         if (!profile.category) throw new Error('Category is required.');
     }
 
+    getId(): number {
+        if (!this.id) throw new Error('Profile has not been saved yet.');
+        return this.id;
+    }
+
     getAge(): number {
         return this.age;
     }

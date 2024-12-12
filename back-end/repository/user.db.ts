@@ -47,4 +47,15 @@ const createUser = async (user: User): Promise<User> => {
         throw new Error('Database error, see server logs for more detail');
     }
 };
-export default { getAllUsers, getUserByUsername, getUserByEmail, createUser };
+
+const getProfileByUserId = async (userId: number) => {
+    const profile = await database.profile.findUnique({
+        where: {
+            userId: userId,
+        },
+    });
+
+    return profile;
+};
+
+export default { getAllUsers, getUserByUsername, getUserByEmail, createUser, getProfileByUserId };

@@ -42,7 +42,8 @@
       "home": "Home",
       "register": "Register",
       "login": "Login",
-      "logout": "Logout"
+      "logout": "Logout",
+      "myEvents": "My events"
     },
     "languageSelect": {
       "en": "English",

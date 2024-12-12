@@ -42,7 +42,8 @@
       "home": "Startpagina",
       "register": "Registeren",
       "login": "Aanmelden",
-      "logout": "Uitloggen"
+      "logout": "Uitloggen",
+      "myEvents": "Mijn evenementen"
     },
     "languageSelect": {
       "en": "Engels",

@@ -90,6 +90,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import eventService from '../service/event.service';
 import { EventInput, Role } from '../types';
 import Event from '../model/event';
+import userService from '../service/user.service';
 
 const eventRouter = express.Router();
 
@@ -200,5 +201,39 @@ eventRouter.delete('/:id', async (req: Request, res: Response, next: NextFunctio
         next(error);
     }
 });
+
+eventRouter.post('/:id/join', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        console.log('in join events back end router');
+        const { userName } = req.body;
+        const eventId = Number(req.params.id);
+        console.log('in join events back end router: ' + eventId);
+        console.log('in join events back end router: ' + userName);
+
+        if (!userName) {
+            throw new Error('userName is required');
+        }
+
+        const profileId = await userService.getProfileIdByUserName(userName);
+
+        await eventService.joinEvent(eventId, profileId);
+        res.status(200).json({ message: 'Successfully joined the event' });
+    } catch (error) {
+        next(error);
+    }
+});
+
+eventRouter.get('/:id/participants', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const eventId = Number(req.params.id);
+        const participantCount = await eventService.getEventParticipants(eventId);
+        res.status(200).json({ eventId, participantCount });
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+
 
 export { eventRouter };

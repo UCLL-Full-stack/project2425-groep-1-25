@@ -1,5 +1,8 @@
-import { Event } from "@/types";
+import ProfileService from "@/services/ProfileService";
+import { Event, User } from "@/types";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import useSWR from "swr";
 
 type Prop = {
   events: Array<Event>;
@@ -7,13 +10,42 @@ type Prop = {
 
 const EventOverview: React.FC<Prop> = ({ events }: Prop) => {
   const router = useRouter();
+  const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
+  const [isUserLoaded, setIsUserLoaded] = useState(false);
+
+  const fetchUser = async () => {
+    const result = sessionStorage.getItem("loggedInUser");
+    if (result) {
+      setLoggedInUser(JSON.parse(result));
+    }
+    setIsUserLoaded(true);
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  const getJoinedEvents = async () => {
+    const data = await ProfileService.getEventsByUserName();
+    return data;
+  };
+
+  const { data: joinedEvents, isLoading, error } = useSWR("getJoinedEvents", getJoinedEvents);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
+  const isJoined = (eventId: number) => {
+    return joinedEvents.some((event: Event) => event.id === eventId);
+  };
+
   return (
     events && (
       <div className="d-flex flex-wrap">
         {events.map((event) => (
           <div
             key={event.id}
-            className="event-card p-3 m-2 border rounded"
+            className={`event-card p-3 m-2 border rounded ${event.id !== undefined && isJoined(event.id) ? 'joined' : ''}`}
             onClick={() => {
               router.push(`/events/${event.id}`);
             }}
@@ -31,6 +63,7 @@ const EventOverview: React.FC<Prop> = ({ events }: Prop) => {
             ) : (
               <p>Location: Not available</p>
             )}
+            {event.id !== undefined && isJoined(event.id) && <p className="joined-text px-4 fs-5 text-red-500">You have joined this event</p>}
           </div>
         ))}
       </div>
