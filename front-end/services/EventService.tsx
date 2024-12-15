@@ -1,10 +1,14 @@
 import { Event } from "@/types";
-import { t } from "i18next";
 
 const getAllEvents = async () => {
+  const user = sessionStorage.getItem("loggedInUser");
+  const token = user ? JSON.parse(user).token : null;
   const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/events", {
     method: "GET",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
   });
   if (!response.ok) {
     throw new Error("Failed to fetch events");
@@ -13,9 +17,14 @@ const getAllEvents = async () => {
 };
 
 const addEvent = async (event: Event) => {
+  const user = sessionStorage.getItem("loggedInUser");
+  const token = user ? JSON.parse(user).token : null;
   return fetch(process.env.NEXT_PUBLIC_API_URL + "/events", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(event),
   });
 };

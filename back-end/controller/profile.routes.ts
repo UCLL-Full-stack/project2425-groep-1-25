@@ -34,7 +34,7 @@ profileRouter.get('/events', async (req: Request, res: Response, next: NextFunct
     try {
         const request = req as Request & { auth: { username: string; role: string } };
         const { username } = request.auth;
-
+        console.log(username);
         const result = await profileService.getEventsByUserName(username);
         res.status(200).json(result);
     } catch (error) {
