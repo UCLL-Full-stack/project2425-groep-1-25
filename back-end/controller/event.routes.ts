@@ -227,7 +227,7 @@ eventRouter.get('/:id/participants', async (req: Request, res: Response, next: N
     try {
         const eventId = Number(req.params.id);
         const participantCount = await eventService.getEventParticipants(eventId);
-        res.status(200).json({ eventId, participantCount });
+        res.status(200).json( participantCount );
     } catch (error) {
         next(error);
     }

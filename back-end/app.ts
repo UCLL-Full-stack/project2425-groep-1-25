@@ -9,8 +9,10 @@ import { expressjwt } from 'express-jwt';
 import userRouter from './controller/user.routes';
 import { categoryRouter } from './controller/category.routes';
 import profileRouter from './controller/profile.routes';
+import helmet from 'helmet';
 
 const app = express();
+app.use(helmet());
 dotenv.config();
 const port = process.env.APP_PORT || 3000;
 

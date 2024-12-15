@@ -15,13 +15,18 @@ const EventDetails: React.FC = () => {
   const router = useRouter();
   const { t } = useTranslation();
   const [event, setEvent] = useState<Event | null>(null);
+  const [participants, setParticipants] = useState(0);
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
   const [isUserLoaded, setIsUserLoaded] = useState(false);
+  const [error, setError] = useState("");
   const { id } = router.query;
 
   const fetchEvent = async () => {
     const response = await EventService.getEventById(Number(id));
+    const participants = await EventService.getEventParticipants(Number(id));
     setEvent(response);
+    setParticipants(participants);
+    console.log(participants);
   };
 
   const fetchUser = async () => {
@@ -49,6 +54,7 @@ const EventDetails: React.FC = () => {
       })
       .catch((error: Error) => {
         console.error(error);
+        setError(error.message.match(/"message":"(.*)"/)?.[1] || error.message);
       }
       );
   };
@@ -114,6 +120,9 @@ const EventDetails: React.FC = () => {
             <p className={styles.p}>
               {t("event.details.category")} {event.category.name}
             </p>
+            <p className={styles.p}>
+              {t("event.details.participants")} {participants}
+            </p>
             <button
               className={styles.button}
               onClick={() => {
@@ -122,6 +131,7 @@ const EventDetails: React.FC = () => {
             >
               <strong>{t("event.details.participate")}</strong>
             </button>
+            {error && <p className={styles.error}>{error}</p>}
           </div>
         </div>
       </>

@@ -110,6 +110,29 @@ const getEvents = async (): Promise<Event[]> => {
 };
 
 const joinEvent = async (eventId: number, profileId: number) => {
+    const profileJoinedEvent = await database.profileEvent.findFirst({
+        where: {
+            eventId: eventId,
+            profileId: profileId,
+        },
+    });
+
+    if (profileJoinedEvent) {
+        throw new Error('User already joined this event');
+    }
+
+    const totalParticipants = await getEventParticipants(eventId);
+    const event = await database.event.findUnique({ 
+        where: { id: eventId },
+    });
+
+    if (!event) {
+        throw new Error('Event not found');
+    }
+
+    if (totalParticipants >= event.maxParticipants) {
+        throw new Error('Event is full');
+    }
     try {
         await database.profileEvent.create({
             data: {

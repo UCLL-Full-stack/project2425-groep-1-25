@@ -60,7 +60,8 @@
       "maxparticipants": "Maximum participants: ",
       "location": "Location: ",
       "category": "Category: ",
-      "participate": "Participate"
+      "participate": "Participate",
+      "participants": "Participants count: "
     }
   }
 }

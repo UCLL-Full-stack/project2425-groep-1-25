@@ -60,7 +60,8 @@
       "maxparticipants": "Maximum deelnemers: ",
       "location": "Locatie: ",
       "category": "Categorie: ",
-      "participate": "Schrijf je in"
+      "participate": "Schrijf je in",
+      "participants": "Hoeveelheid deelnemers:"
     }
   }
 }
