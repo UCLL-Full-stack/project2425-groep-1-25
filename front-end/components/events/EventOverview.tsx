@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
 import useSWR from "swr";
+import React from "react";
 
 type Prop = {
   events: Array<Event>;
