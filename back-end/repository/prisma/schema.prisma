@@ -72,7 +72,7 @@ model ProfileEvent {
   eventId Int
 
   profile    Profile   @relation(fields: [profileId], references: [id])
-  event      Event  @relation(fields: [eventId], references: [id])
+  event      Event  @relation(fields: [eventId], references: [id], onDelete:Cascade)
 
   @@id([profileId, eventId])
 }

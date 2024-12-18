@@ -264,7 +264,7 @@ eventRouter.delete('/:id', async (req: Request, res: Response, next: NextFunctio
         const request = req as Request & { auth: { userName: string; role: string } };
         const { role } = request.auth;
         const id = Number(req.params.id);
-        eventService.deleteEvent(id, role as Role);
+        await eventService.deleteEvent(id, role as Role);
     } catch (error) {
         next(error);
     }

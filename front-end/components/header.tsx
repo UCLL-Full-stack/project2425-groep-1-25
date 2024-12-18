@@ -24,7 +24,7 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className={` p-3 mb-3 border-bottom ${styles["custom-gradient"]}`}>
+    <header className={` p-3 mb-3 border-bottom ${styles.custom_gradient}`}>
       <a className="fs-2 d-flex justify-content-center mb-2 mb-lg-0 text-white text-decoration-none">
         {t("header.name")}
       </a>

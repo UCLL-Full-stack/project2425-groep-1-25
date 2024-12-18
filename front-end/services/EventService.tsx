@@ -132,7 +132,7 @@ const getEventsByParticipant = async () => {
 const deleteEvent = async (id: number) => {
   const user = sessionStorage.getItem("loggedInUser");
   const token = user ? JSON.parse(user).token : null;
-  const result = await fetch(
+  const response = await fetch(
     process.env.NEXT_PUBLIC_API_URL + `/events/${id}`,
     {
       method: "DELETE",
@@ -142,10 +142,11 @@ const deleteEvent = async (id: number) => {
       },
     }
   );
-  if (!result.ok) {
-    throw new Error("Unable to delete event.");
+  if (!response.ok) {
+    const result = await response.json();
+    throw new Error(result.message);
   }
-  return result.json();
+  return response.json();
 };
 
 export default {

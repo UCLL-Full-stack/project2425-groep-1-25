@@ -23,6 +23,7 @@ const EditEventForm: React.FC<Prop> = ({ event }: Prop) => {
   const [categoryDescription, setCategoryDescription] = useState(
     event.category.description
   );
+  const [statusMessage, setStatusMessage] = useState<string>("");
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
     if (!name) newErrors.name = "Name is required";
@@ -48,7 +49,16 @@ const EditEventForm: React.FC<Prop> = ({ event }: Prop) => {
   };
 
   const handleDelete = async () => {
-    if (event.id) EventService.deleteEvent(event.id);
+    if (event.id) {
+      try {
+        await EventService.deleteEvent(event.id);
+      } catch (error) {
+        if (error instanceof Error) {
+          setStatusMessage(error.message);
+        }
+        return;
+      }
+    }
 
     setTimeout(() => {
       router.push("/events");
@@ -239,6 +249,11 @@ const EditEventForm: React.FC<Prop> = ({ event }: Prop) => {
             Delete
           </button>
         </p>
+        {statusMessage && (
+          <>
+            <p className={styles.error}>{statusMessage}</p>
+          </>
+        )}
       </form>
     </>
   );

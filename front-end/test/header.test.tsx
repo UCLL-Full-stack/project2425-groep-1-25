@@ -5,12 +5,12 @@ import { useRouter } from "next/router";
 
 window.React = React;
 
-jest.mock('react-i18next', () => ({
-    useTranslation: () => ({ t: (key: any) => key })
+jest.mock("next-i18next", () => ({
+  useTranslation: () => ({ t: (key: any) => key }),
 }));
 
-jest.mock('next/router', () => ({
-    useRouter: jest.fn(),
+jest.mock("next/router", () => ({
+  useRouter: jest.fn(),
 }));
 
 const user = {
@@ -29,27 +29,27 @@ const user = {
       street: "Main Street",
       number: 123,
       city: "City A",
-      country: "Country A"
+      country: "Country A",
     },
     category: {
       id: 1,
       name: "Category 1",
-      description: "Description for Category 1"
+      description: "Description for Category 1",
     },
-    events: []
-  }
+    events: [],
+  },
 };
 
 beforeEach(() => {
-    jest.clearAllMocks();
-    sessionStorage.setItem("loggedInUser", JSON.stringify(user));
-    (useRouter as jest.Mock).mockReturnValue({ push: jest.fn() });
+  jest.clearAllMocks();
+  sessionStorage.setItem("loggedInUser", JSON.stringify(user));
+  (useRouter as jest.Mock).mockReturnValue({ push: jest.fn() });
 });
 
 test("given a user, when the user is logged in, then the username should be displayed", () => {
-    //when 
-    render(<Header />);
+  //when
+  render(<Header />);
 
-    //then
-    expect(screen.getByText(`${user.userName}`));
+  //then
+  expect(screen.getByText(`${user.userName}`));
 });

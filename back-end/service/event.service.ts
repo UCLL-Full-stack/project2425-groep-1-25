@@ -32,7 +32,7 @@ const addEvent = async ({
 
         return await eventDb.addEvent(event);
     } catch (error) {
-        throw new Error(`Error: ${error}`);
+        throw new Error(`${error}`);
     }
 };
 
@@ -45,7 +45,7 @@ const deleteEvent = async (id: number, role: Role) => {
             throw new Error(`Only an administrator can delete events.`);
         }
     } catch (error) {
-        throw new Error(`Error: ${error}`);
+        throw new Error(`${error}`);
     }
 };
 
@@ -71,7 +71,7 @@ const editEvent = async (id: number, editEvent: EventInput, role: Role) => {
             throw new Error(`Only an administrator or event moderator can edit events.`);
         }
     } catch (error) {
-        throw new Error(`Error: ${error}`);
+        throw new Error(`${error}`);
     }
 };
 
@@ -83,7 +83,7 @@ const getEventById = async (id: number): Promise<Event> => {
         }
         return result;
     } catch (error) {
-        throw new Error(`Error: ${error}`);
+        throw new Error(`${error}`);
     }
 };
 
@@ -119,7 +119,7 @@ const getEventParticipants = async (eventId: number) => {
         }
         return await eventProfileService.getEventParticipants(eventId);
     } catch (error) {
-        throw new Error(`Error: ${error}`);
+        throw new Error(`${error}`);
     }
 };
 
@@ -129,7 +129,7 @@ const getEventsOfParticipant = async (userName: string): Promise<Event[]> => {
 
         return await eventProfileDb.getEventsByProfile(profileId);
     } catch (error) {
-        throw new Error(`Error: ${error}`);
+        throw new Error(`${error}`);
     }
 };
 
