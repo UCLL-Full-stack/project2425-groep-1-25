@@ -1,6 +1,7 @@
 import { Event } from '../model/event';
 import { EventInput } from '../types';
 import database from './database';
+import eventProfileDb from './eventProfile.db';
 
 const addEvent = async (event: Event): Promise<Event> => {
     try {
@@ -110,29 +111,6 @@ const getEvents = async (): Promise<Event[]> => {
 };
 
 const joinEvent = async (eventId: number, profileId: number) => {
-    const profileJoinedEvent = await database.profileEvent.findFirst({
-        where: {
-            eventId: eventId,
-            profileId: profileId,
-        },
-    });
-
-    if (profileJoinedEvent) {
-        throw new Error('User already joined this event');
-    }
-
-    const totalParticipants = await getEventParticipants(eventId);
-    const event = await database.event.findUnique({
-        where: { id: eventId },
-    });
-
-    if (!event) {
-        throw new Error('Event not found');
-    }
-
-    if (totalParticipants >= event.maxParticipants) {
-        throw new Error('Event is full');
-    }
     try {
         await database.profileEvent.create({
             data: {
@@ -146,37 +124,6 @@ const joinEvent = async (eventId: number, profileId: number) => {
     }
 };
 
-const getEventParticipants = async (eventId: number): Promise<number> => {
-    try {
-        const participants = await database.profileEvent.count({
-            where: {
-                eventId: eventId,
-            },
-        });
-        return participants;
-    } catch (error) {
-        console.log(error);
-        throw new Error('Database Error, see server log for more detail');
-    }
-};
-
-const getEventsByProfile = async (profileId: number): Promise<Event[]> => {
-    try {
-        const eventsPrisma = await database.profileEvent.findMany({
-            where: {
-                profileId: profileId,
-            },
-            include: {
-                event: { include: { location: true, category: true } },
-            },
-        });
-        return eventsPrisma.map((eventPrisma) => Event.from(eventPrisma.event));
-    } catch (error) {
-        console.log(error);
-        throw new Error('Database Error, see server log for more detail');
-    }
-};
-
 export default {
     addEvent,
     getEventById,
@@ -184,6 +131,4 @@ export default {
     editEvent,
     getEvents,
     joinEvent,
-    getEventParticipants,
-    getEventsByProfile,
 };

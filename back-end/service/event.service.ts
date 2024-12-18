@@ -3,12 +3,9 @@ import { Event } from '../model/event';
 import { EventInput, Role } from '../types';
 import locationService from './location.service';
 import categoryService from './category.service';
-import { Category } from '../model/category';
-import { Location } from '../model/location';
-import { join } from 'path';
-import { get } from 'http';
 import userService from './user.service';
-import { User } from '../model/user';
+import eventProfileService from './eventProfile.service';
+import eventProfileDb from '../repository/eventProfile.db';
 
 const addEvent = async ({
     name,
@@ -92,13 +89,23 @@ const getEventById = async (id: number): Promise<Event> => {
 
 const getEvents = (): Promise<Event[]> => eventDb.getEvents();
 
-const joinEvent = async (eventId: number, userId: number) => {
+const joinEvent = async (eventId: number, profileId: number) => {
     try {
+        const profileJoinedEvent = await eventProfileService.findProfileEvent(profileId, eventId);
+
+        if (profileJoinedEvent) {
+            throw new Error('User already joined this event');
+        }
+
         const event = await eventDb.getEventById(eventId);
         if (!event) {
             throw new Error(`No event with id ${eventId} found.`);
         }
-        return await eventDb.joinEvent(eventId, userId);
+        const totalParticipants = await getEventParticipants(eventId);
+        if (totalParticipants >= event.getMaxParticipants()) {
+            throw new Error('Event is full');
+        }
+        return await eventDb.joinEvent(eventId, profileId);
     } catch (error) {
         throw new Error(`${error}`);
     }
@@ -110,17 +117,17 @@ const getEventParticipants = async (eventId: number) => {
         if (!event) {
             throw new Error(`No event with id ${eventId} found.`);
         }
-        return await eventDb.getEventParticipants(eventId);
+        return await eventProfileService.getEventParticipants(eventId);
     } catch (error) {
         throw new Error(`Error: ${error}`);
     }
 };
 
-const getEventsOfParticipant = async (userName: string) => {
+const getEventsOfParticipant = async (userName: string): Promise<Event[]> => {
     try {
         const profileId = await userService.getProfileIdByUserName(userName);
 
-        return await eventDb.getEventsByProfile(profileId);
+        return await eventProfileDb.getEventsByProfile(profileId);
     } catch (error) {
         throw new Error(`Error: ${error}`);
     }

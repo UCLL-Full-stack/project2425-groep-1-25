@@ -65,7 +65,7 @@ const getProfileIdByUserName = async (userName: string): Promise<number> => {
         throw new Error('Profile not found');
     }
 
-    return profile.id;
+    return profile.getId();
 };
 
 export default { getAllUsers, createUser, authenicate, getUserByUserName, getProfileIdByUserName };
