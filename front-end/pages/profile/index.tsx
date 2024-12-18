@@ -13,7 +13,6 @@ const ProfilePage: React.FC = () => {
         <meta name="description" content="Eventer home page" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      <Header></Header>
       <ProfileForm></ProfileForm>
     </>
   );
