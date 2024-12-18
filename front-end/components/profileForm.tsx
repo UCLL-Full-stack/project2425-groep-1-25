@@ -127,6 +127,7 @@ const ProfileForm: React.FC = () => {
                 {statusMessage.message}
               </p>
             ))}
+          <h1>Complete your profile before you can return to the main page!</h1>
           <form onSubmit={handleSubmit} className={styles.form}>
             <div className={styles.div}>
               {statusMessages && (
