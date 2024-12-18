@@ -16,6 +16,34 @@ const LoginPage: React.FC = () => {
       </Head>
       <Header></Header>
       <LoginForm></LoginForm>
+      <div>
+        <table className="table border-separate border border-black-800"> 
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Password</th>
+              <th>Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Jefke</td>
+              <td>Test123</td>
+              <td>User</td>
+            </tr>
+            <tr>
+              <td>admin</td>
+              <td>admin123</td>
+              <td>Admin</td>
+            </tr>
+            <tr>
+              <td>mod</td>
+              <td>mod123</td>
+              <td>Mod</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </>
   );
 };
