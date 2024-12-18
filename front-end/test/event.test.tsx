@@ -14,8 +14,6 @@ jest.mock('next/router', () => ({
     useRouter: jest.fn(),
 }));
 
-
-
 const events = [
     {
       id: 1,
