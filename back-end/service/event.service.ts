@@ -100,7 +100,7 @@ const joinEvent = async (eventId: number, userId: number) => {
         }
         return await eventDb.joinEvent(eventId, userId);
     } catch (error) {
-        throw new Error(`Error: ${error}`);
+        throw new Error(`${error}`);
     }
 };
 

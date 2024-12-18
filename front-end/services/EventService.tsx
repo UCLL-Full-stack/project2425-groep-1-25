@@ -83,8 +83,8 @@ const joinEvent = async (eventId: number) => {
   );
 
   if (!response.ok) {
-    const errorMessage = await response.text();
-    throw new Error(`Failed to join event: ${errorMessage}`);
+    const errorMessage = await response.json();
+    throw new Error(`${errorMessage.message}`);
   }
 
   return response.json();

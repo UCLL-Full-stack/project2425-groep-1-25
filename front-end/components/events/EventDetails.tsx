@@ -51,16 +51,16 @@ const EventDetail: React.FC<Prop> = ({ eventid }: Prop) => {
   } = useSWR(eventid ? `Fetch event ${eventid}` : null, fetchEvent);
 
   const handleOnClick = () => {
-    try {
-      if (!loggedInUser) {
-        throw new Error("User not logged in");
-      }
-      EventService.joinEvent(Number(eventid)).then(() => {
-        router.push("/events");
-      });
-    } catch (error) {
-      setStatusMessage((error as Error).message);
+    if (!loggedInUser) {
+      throw new Error("User not logged in");
     }
+    EventService.joinEvent(Number(eventid))
+      .then(() => {
+        router.push("/events");
+      })
+      .catch((error: Error) => {
+        setStatusMessage(error.message);
+      });
   };
 
   const handleEdit = () => {
@@ -127,7 +127,7 @@ const EventDetail: React.FC<Prop> = ({ eventid }: Prop) => {
         </button>
         {statusMessage && (
           <>
-            <p>{statusMessage}</p>
+            <p className={styles.error}>{statusMessage}</p>
           </>
         )}
       </div>
