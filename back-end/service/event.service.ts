@@ -7,6 +7,8 @@ import { Category } from '../model/category';
 import { Location } from '../model/location';
 import { join } from 'path';
 import { get } from 'http';
+import userService from './user.service';
+import { User } from '../model/user';
 
 const addEvent = async ({
     name,
@@ -114,6 +116,16 @@ const getEventParticipants = async (eventId: number) => {
     }
 };
 
+const getEventsOfParticipant = async (userName: string) => {
+    try {
+        const profileId = await userService.getProfileIdByUserName(userName);
+
+        return await eventDb.getEventsByProfile(profileId);
+    } catch (error) {
+        throw new Error(`Error: ${error}`);
+    }
+};
+
 export default {
     addEvent,
     deleteEvent,
@@ -122,4 +134,5 @@ export default {
     getEvents,
     joinEvent,
     getEventParticipants,
+    getEventsOfParticipant,
 };

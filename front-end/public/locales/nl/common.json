@@ -3,6 +3,7 @@
   "home": {
     "description": "In het huidige digitale tijdperk wordt het steeds belangrijker om mensen weer verbinding te laten maken in de echte wereld. Dit is wat eventer wil doen. Verbind allerlei verschillende soorten mensen via gemeenschappelijke passies, in het echte leven. Gebruikers krijgen evenementen aangeboden die zijn afgestemd op hun interesses en kunnen deze ervaren in een nieuwe sociale setting."
   },
+  "general.loading": "Laden...",
   "general.error": "Er is een fout opgetreden, probeer later opnieuw.",
   "login": {
     "title": "Aanmelden - Eventer",
@@ -12,7 +13,7 @@
       "name": "Naam is vereist.",
       "password": "Wachtwoord is vereist."
     },
-    "label": { "name": "Naam:", "password": "Wachtwoord:" }
+    "label": { "username": "Naam:", "password": "Wachtwoord:" }
   },
   "register": {
     "title": "Registreren - Eventer",

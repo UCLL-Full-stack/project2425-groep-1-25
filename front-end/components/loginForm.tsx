@@ -3,6 +3,7 @@ import { useState } from "react";
 import { StatusMessage } from "@/types";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
+import styles from "@/styles/Form.module.css";
 
 const LoginForm: React.FC = () => {
   const { t } = useTranslation();
@@ -71,10 +72,18 @@ const LoginForm: React.FC = () => {
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
+      {statusMessages.map((message, index) => (
+        <div key={index} className={message.type}>
+          {message.message}
+        </div>
+      ))}
+      <form onSubmit={handleSubmit} className={styles.form}>
         <div>
-          <label htmlFor="name">{t("login.label.username")}</label>
+          <label className={styles.label} htmlFor="name">
+            {t("login.label.username")}
+          </label>
           <input
+            className={styles.input}
             type="text"
             id="name"
             value={name}
@@ -83,8 +92,11 @@ const LoginForm: React.FC = () => {
           <div>{nameError}</div>
         </div>
         <div>
-          <label htmlFor="password">{t("login.label.password")}</label>
+          <label className={styles.label} htmlFor="password">
+            {t("login.label.password")}
+          </label>
           <input
+            className={styles.input}
             type="password"
             id="password"
             value={password}
@@ -92,13 +104,10 @@ const LoginForm: React.FC = () => {
           />
           <div>{passwordError}</div>
         </div>
-        <button type="submit">{t("login.button")}</button>
+        <button type="submit" className={styles.button}>
+          {t("login.button")}
+        </button>
       </form>
-      {statusMessages.map((message, index) => (
-        <div key={index} className={message.type}>
-          {message.message}
-        </div>
-      ))}
     </>
   );
 };

@@ -9,24 +9,19 @@ import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import useSWR from "swr";
-import ProfileService from "@/services/ProfileService";
 
 const EventDetails: React.FC = () => {
   const router = useRouter();
   const { t } = useTranslation();
-  const [event, setEvent] = useState<Event | null>(null);
-  const [participants, setParticipants] = useState(0);
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
   const [isUserLoaded, setIsUserLoaded] = useState(false);
-  const [error, setError] = useState("");
   const { id } = router.query;
 
   const fetchEvent = async () => {
-    const response = await EventService.getEventById(Number(id));
-    const participants = await EventService.getEventParticipants(Number(id));
-    setEvent(response);
-    setParticipants(participants);
-    console.log(participants);
+    return await EventService.getEventById(Number(id));
+  };
+  const fetchParticipants = async () => {
+    return await EventService.getEventParticipants(Number(id));
   };
 
   const fetchUser = async () => {
@@ -39,27 +34,27 @@ const EventDetails: React.FC = () => {
   useEffect(() => {
     fetchUser();
   }, []);
-  useEffect(() => {
-    if (id && isUserLoaded && loggedInUser) {
-      fetchEvent();
-    }
-  }, [isUserLoaded, id]);
+
+  const {
+    data: participants,
+    isLoading: isLoadingParticipants,
+    error: errorParticipants,
+  } = useSWR("Fetch participants", fetchParticipants);
+
+  const {
+    data: event,
+    isLoading: isLoadingEvent,
+    error: errorEvent,
+  } = useSWR("Fetch event", fetchEvent);
+
   const handleOnClick = () => {
     if (!loggedInUser) {
       throw new Error("User not logged in");
     }
-    EventService.joinEvent(Number(id))
-      .then(() => {
-        router.push("/events");
-      })
-      .catch((error: Error) => {
-        console.error(error);
-        setError(error.message.match(/"message":"(.*)"/)?.[1] || error.message);
-      }
-      );
+    EventService.joinEvent(Number(id)).then(() => {
+      router.push("/events");
+    });
   };
-
-
 
   const handleEdit = () => {
     router.push(`edit/${id}`);
@@ -78,6 +73,11 @@ const EventDetails: React.FC = () => {
       </>
     );
   }
+
+  if (errorEvent) return <div>{errorEvent}</div>;
+  if (errorParticipants) return <div>{errorParticipants}</div>;
+  if (isLoadingParticipants || isLoadingEvent)
+    return <div>{t("general.loading")}</div>;
 
   return (
     event && (
@@ -131,7 +131,6 @@ const EventDetails: React.FC = () => {
             >
               <strong>{t("event.details.participate")}</strong>
             </button>
-            {error && <p className={styles.error}>{error}</p>}
           </div>
         </div>
       </>

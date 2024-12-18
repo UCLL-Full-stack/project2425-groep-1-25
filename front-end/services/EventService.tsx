@@ -62,7 +62,6 @@ const getEventById = async (id: number) => {
 };
 
 const joinEvent = async (eventId: number) => {
-  console.log("in join events front end service: " + eventId);
   const user = sessionStorage.getItem("loggedInUser");
   const token = user ? JSON.parse(user).token : null;
   const userName = user ? JSON.parse(user).userName : null;
@@ -109,6 +108,27 @@ const getEventParticipants = async (eventId: number) => {
   }
   return result.json();
 };
+
+const getEventsByParticipant = async () => {
+  const user = sessionStorage.getItem("loggedInUser");
+  const token = user ? JSON.parse(user).token : null;
+  const userName = user ? JSON.parse(user).userName : null;
+  const result = await fetch(
+    process.env.NEXT_PUBLIC_API_URL + `/events/${userName}/joined`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  if (!result.ok) {
+    throw new Error("Failed to fetch events");
+  }
+  return result.json();
+};
+
 const deleteEvent = async (id: number) => {
   const user = sessionStorage.getItem("loggedInUser");
   const token = user ? JSON.parse(user).token : null;
@@ -136,4 +156,5 @@ export default {
   joinEvent,
   deleteEvent,
   getEventParticipants,
+  getEventsByParticipant,
 };

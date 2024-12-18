@@ -1,3 +1,4 @@
+import EventService from "@/services/EventService";
 import ProfileService from "@/services/ProfileService";
 import { Event, User } from "@/types";
 import { useRouter } from "next/router";
@@ -26,18 +27,20 @@ const EventOverview: React.FC<Prop> = ({ events }: Prop) => {
   }, []);
 
   const getJoinedEvents = async () => {
-    const data = await ProfileService.getEventsByUserName();
+    const data = await EventService.getEventsByParticipant();
     return data;
   };
-
-  const { data: joinedEvents, isLoading, error } = useSWR("getJoinedEvents", getJoinedEvents);
-
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
-
   const isJoined = (eventId: number) => {
     return joinedEvents.some((event: Event) => event.id === eventId);
   };
+  const {
+    data: joinedEvents,
+    isLoading,
+    error,
+  } = useSWR("getJoinedEvents", getJoinedEvents);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error while fetching events</div>;
 
   return (
     events && (
@@ -45,7 +48,9 @@ const EventOverview: React.FC<Prop> = ({ events }: Prop) => {
         {events.map((event) => (
           <div
             key={event.id}
-            className={`event-card p-3 m-2 border rounded ${event.id !== undefined && isJoined(event.id) ? 'joined' : ''}`}
+            className={`event-card p-3 m-2 border rounded ${
+              event.id !== undefined && isJoined(event.id) ? "joined" : ""
+            }`}
             onClick={() => {
               router.push(`/events/${event.id}`);
             }}
@@ -63,7 +68,11 @@ const EventOverview: React.FC<Prop> = ({ events }: Prop) => {
             ) : (
               <p>Location: Not available</p>
             )}
-            {event.id !== undefined && isJoined(event.id) && <p className="joined-text px-4 fs-5 text-red-500">You have joined this event</p>}
+            {event.id !== undefined && isJoined(event.id) && (
+              <p className="joined-text px-4 fs-5 text-red-500">
+                You have joined this event
+              </p>
+            )}
           </div>
         ))}
       </div>

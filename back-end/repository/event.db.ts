@@ -122,7 +122,7 @@ const joinEvent = async (eventId: number, profileId: number) => {
     }
 
     const totalParticipants = await getEventParticipants(eventId);
-    const event = await database.event.findUnique({ 
+    const event = await database.event.findUnique({
         where: { id: eventId },
     });
 
@@ -144,7 +144,7 @@ const joinEvent = async (eventId: number, profileId: number) => {
         console.log(error);
         throw new Error('Database Error, see server log for more detail');
     }
-}
+};
 
 const getEventParticipants = async (eventId: number): Promise<number> => {
     try {
@@ -158,7 +158,24 @@ const getEventParticipants = async (eventId: number): Promise<number> => {
         console.log(error);
         throw new Error('Database Error, see server log for more detail');
     }
-}
+};
+
+const getEventsByProfile = async (profileId: number): Promise<Event[]> => {
+    try {
+        const eventsPrisma = await database.profileEvent.findMany({
+            where: {
+                profileId: profileId,
+            },
+            include: {
+                event: { include: { location: true, category: true } },
+            },
+        });
+        return eventsPrisma.map((eventPrisma) => Event.from(eventPrisma.event));
+    } catch (error) {
+        console.log(error);
+        throw new Error('Database Error, see server log for more detail');
+    }
+};
 
 export default {
     addEvent,
@@ -168,4 +185,5 @@ export default {
     getEvents,
     joinEvent,
     getEventParticipants,
+    getEventsByProfile,
 };
