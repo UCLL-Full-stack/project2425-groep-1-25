@@ -1,8 +1,8 @@
 import EventService from "@/services/EventService";
-import ProfileService from "@/services/ProfileService";
 import { Event, User } from "@/types";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useTranslation } from "next-i18next";
 import useSWR from "swr";
 
 type Prop = {
@@ -10,6 +10,7 @@ type Prop = {
 };
 
 const EventOverview: React.FC<Prop> = ({ events }: Prop) => {
+  const { t } = useTranslation();
   const router = useRouter();
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
   const [isUserLoaded, setIsUserLoaded] = useState(false);
@@ -39,8 +40,8 @@ const EventOverview: React.FC<Prop> = ({ events }: Prop) => {
     error,
   } = useSWR("getJoinedEvents", getJoinedEvents);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error while fetching events</div>;
+  if (isLoading) return <div>{t("general.loading")}</div>;
+  if (error) return <div>{t("general.error")}</div>;
 
   return (
     events && (
@@ -56,21 +57,29 @@ const EventOverview: React.FC<Prop> = ({ events }: Prop) => {
             }}
           >
             <h2>{event.name}</h2>
-            <p>Date: {new Date(event.date).toLocaleDateString()}</p>
-            <p>Price: {event.price}</p>
-            <p>Min Participants: {event.minParticipants}</p>
-            <p>Max Participants: {event.maxParticipants}</p>
-            {event.location ? (
-              <p>
-                Location: {event.location.street} {event.location.number},{" "}
-                {event.location.city}, {event.location.country}
-              </p>
-            ) : (
-              <p>Location: Not available</p>
-            )}
+            <p>
+              {t("event.details.date")}
+              {new Date(event.date).toLocaleDateString()}
+            </p>
+            <p>
+              {t("event.details.price")} {event.price}
+            </p>
+            <p>
+              {t("event.details.minparticipants")}
+              {event.minParticipants}
+            </p>
+            <p>
+              {t("event.details.maxparticipants")}
+              {event.maxParticipants}
+            </p>
+            <p>
+              {t("event.details.location")} {event.location.street}{" "}
+              {event.location.number}, {event.location.city},{" "}
+              {event.location.country}
+            </p>
             {event.id !== undefined && isJoined(event.id) && (
               <p className="joined-text px-4 fs-5 text-red-500">
-                You have joined this event
+                {t("event.details.joined")}
               </p>
             )}
           </div>

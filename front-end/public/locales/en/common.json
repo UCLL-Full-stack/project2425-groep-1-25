@@ -56,13 +56,15 @@
     "details": {
       "loginerror": "Please log in first.",
       "editeventbutton": "Edit event",
+      "price": "Price: ",
       "date": "Date: ",
       "minparticipants": "Minimum participants: ",
       "maxparticipants": "Maximum participants: ",
       "location": "Location: ",
       "category": "Category: ",
       "participate": "Participate",
-      "participants": "Participants count: "
+      "participants": "Participants count: ",
+      "joined": "You joined this event."
     }
   }
 }
