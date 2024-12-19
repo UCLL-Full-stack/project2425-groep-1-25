@@ -68,6 +68,39 @@ const main = async () => {
             category: { connect: { id: concertCategory.id } },
         },
     });
+    const event2 = await prisma.event.create({
+        data: {
+            name: 'ice hockey',
+            date: eventDate,
+            price: 10,
+            minParticipants: 10,
+            maxParticipants: 20,
+            location: { connect: { id: locationEvent1.id } },
+            category: { connect: { id: concertCategory.id } },
+        },
+    });
+    const event3 = await prisma.event.create({
+        data: {
+            name: 'Theater',
+            date: eventDate,
+            price: 20,
+            minParticipants: 5,
+            maxParticipants: 10,
+            location: { connect: { id: locationEvent1.id } },
+            category: { connect: { id: concertCategory.id } },
+        },
+    });
+    const event4 = await prisma.event.create({
+        data: {
+            name: 'skiing',
+            date: eventDate,
+            price: 2000,
+            minParticipants: 5,
+            maxParticipants: 10,
+            location: { connect: { id: locationEvent1.id } },
+            category: { connect: { id: concertCategory.id } },
+        },
+    });
     const locationJefke = await prisma.location.create({
         data: {
             street: 'Kapucijnenvoer',
