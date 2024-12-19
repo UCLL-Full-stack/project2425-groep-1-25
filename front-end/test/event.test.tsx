@@ -84,7 +84,7 @@ const events = [
 test("given events, when rendering EventOverview, then render all events", async () => {
   // when
   await act(async () => {
-    render(<EventOverview events={events} />);
+    render(<EventOverview />);
   });
   // then
   expect(screen.findByText("Event 1"));

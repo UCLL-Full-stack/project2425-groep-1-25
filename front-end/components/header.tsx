@@ -1,5 +1,5 @@
 import Link from "next/link";
-import styles from "@/styles/Header.module.css";
+// import styles from "@/styles/Header.module.css";
 import { useEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
 import Language from "./Language";
@@ -22,9 +22,11 @@ const Header: React.FC = () => {
     sessionStorage.removeItem("loggedInUser");
     setLoggedInUser(null);
   };
-
+  const gradient = {
+    background: " linear-gradient(to right, #70e1f5, #ffd194)",
+  };
   return (
-    <header className={` p-3 mb-3 border-bottom ${styles.custom_gradient}`}>
+    <header className={` p-3 mb-3 border-bottom `} style={gradient}>
       <a className="fs-2 d-flex justify-content-center mb-2 mb-lg-0 text-white text-decoration-none">
         {t("header.name")}
       </a>
@@ -58,7 +60,10 @@ const Header: React.FC = () => {
               >
                 {t("header.nav.logout")}
               </Link>
-              <p className="text-white fs-5 px-4 nav-link">
+              <p
+                className="text-white fs-5 px-4 nav-link"
+                data-testid={loggedInUser.userName}
+              >
                 {t("header.welcome")} {loggedInUser.userName}
               </p>
             </>

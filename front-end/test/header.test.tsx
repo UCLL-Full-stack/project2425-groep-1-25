@@ -51,5 +51,5 @@ test("given a user, when the user is logged in, then the username should be disp
   render(<Header />);
 
   //then
-  expect(screen.getByText(`${user.userName}`));
+  expect(screen.getByTestId(`${user.userName}`));
 });

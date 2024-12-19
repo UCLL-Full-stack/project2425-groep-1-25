@@ -13,6 +13,13 @@ import helmet from 'helmet';
 
 const app = express();
 app.use(helmet());
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
+            connectSrc: ["'self'", 'https://api.ucll.be/'],
+        },
+    })
+);
 dotenv.config();
 const port = process.env.APP_PORT || 3000;
 
