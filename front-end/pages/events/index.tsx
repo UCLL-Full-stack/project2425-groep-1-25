@@ -2,14 +2,12 @@ import Head from "next/head";
 import styles from "@/styles/home.module.css";
 import Header from "@/components/header";
 import { useEffect, useState } from "react";
-import EventService from "@/services/EventService";
 import { User } from "@/types";
 import { useRouter } from "next/router";
 import EventOverview from "@/components/events/EventOverview";
 import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
-import useSWR from "swr";
 
 const Home: React.FC = () => {
   const { t } = useTranslation();
