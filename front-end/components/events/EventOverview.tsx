@@ -6,11 +6,7 @@ import { useTranslation } from "next-i18next";
 import useSWR from "swr";
 import React from "react";
 
-type Prop = {
-  events: Array<Event>;
-};
-
-const EventOverview: React.FC<Prop> = ({ events }: Prop) => {
+const EventOverview: React.FC = () => {
   const { t } = useTranslation();
   const router = useRouter();
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
@@ -27,7 +23,10 @@ const EventOverview: React.FC<Prop> = ({ events }: Prop) => {
   useEffect(() => {
     fetchUser();
   }, []);
-
+  const fetchEvents = async () => {
+    const response = await EventService.getAllEvents();
+    return response;
+  };
   const getJoinedEvents = async () => {
     const data = await EventService.getEventsByParticipant();
     return data;
@@ -37,17 +36,24 @@ const EventOverview: React.FC<Prop> = ({ events }: Prop) => {
   };
   const {
     data: joinedEvents,
-    isLoading,
-    error,
+    isLoading: isLoadingJoinedEvents,
+    error: errorJoinedEvents,
   } = useSWR("getJoinedEvents", getJoinedEvents);
 
-  if (isLoading) return <div>{t("general.loading")}</div>;
-  if (error) return <div>{t("general.error")}</div>;
+  const {
+    data: events,
+    isLoading: isLoadingEvents,
+    error: errorEvents,
+  } = useSWR("fetchEvents", async () => fetchEvents());
 
+  if ((isLoadingEvents || isLoadingJoinedEvents) && loggedInUser)
+    return <div>{t("general.loading")}</div>;
+  if ((errorEvents || errorJoinedEvents) && loggedInUser)
+    return <div>{t("general.error")}</div>;
   return (
     events && (
       <div className="d-flex flex-wrap">
-        {events.map((event) => (
+        {events.map((event: Event) => (
           <div
             key={event.id}
             className={`event-card p-3 m-2 border rounded ${

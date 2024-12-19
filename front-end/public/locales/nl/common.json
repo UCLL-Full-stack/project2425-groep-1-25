@@ -5,6 +5,7 @@
   },
   "general.loading": "Laden...",
   "general.error": "Er is een fout opgetreden, probeer later opnieuw.",
+  "general.loginerror": "Meld je eerst aan",
   "login": {
     "title": "Aanmelden - Eventer",
     "button": "Meld aan",

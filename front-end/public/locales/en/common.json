@@ -5,6 +5,7 @@
   },
   "general.loading": "Loading...",
   "general.error": "An error has occured, please try again later.",
+  "general.loginerror": "Please log in first",
   "login": {
     "title": "Login - Eventer",
     "button": "Login",
