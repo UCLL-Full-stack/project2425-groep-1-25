@@ -29,6 +29,10 @@
  *         maxParticipants:
  *           type: integer
  *           description: The maximum number of participants for the event
+ *         location:
+ *           $ref: '#/components/schemas/Location'
+ *         category:
+ *           $ref: '#/components/schemas/Category'
  *         lastEdit:
  *           type: string
  *           format: date-time
@@ -84,6 +88,24 @@
  *         description:
  *           type: string
  *           description: The description of the category
+ *     Location:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           description: The auto-generated id of the location
+ *         street:
+ *           type: string
+ *           description: The street of the location
+ *         number:
+ *           type: integer
+ *           description: The number of the location
+ *         city:
+ *           type: string
+ *           description: The city of the location
+ *         country:
+ *           type: string
+ *           description: The country of the location
  */
 
 import express, { NextFunction, Request, Response } from 'express';
@@ -99,6 +121,8 @@ const eventRouter = express.Router();
  * /events:
  *   get:
  *     summary: Get all events
+ *     security:
+ *       - bearerAuth: JWT
  *     responses:
  *       200:
  *         description: A list of events
@@ -123,6 +147,8 @@ eventRouter.get('/', async (req: Request, res: Response, next: NextFunction) => 
  * /events/{id}:
  *   get:
  *     summary: Get an event by id
+ *     security:
+ *       - bearerAuth: JWT
  *     parameters:
  *       - in: path
  *         name: id
@@ -153,7 +179,7 @@ eventRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) 
  *   post:
  *     summary: Create a new event
  *     security:
- *       - bearerAuth: []
+ *       - bearerAuth: JWT
  *     requestBody:
  *       required: true
  *       content:
@@ -177,7 +203,33 @@ eventRouter.post('/', async (req: Request, res: Response, next: NextFunction) =>
         next(error);
     }
 });
-
+/**
+ * @swagger
+ * /events/{id}:
+ *   put:
+ *     summary: Update an event
+ *     security:
+ *       - bearerAuth: JWT
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/EventInput'
+ *     responses:
+ *       200:
+ *         description: The updated event
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Event'
+ */
 eventRouter.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const request = req as Request & { auth: { userName: string; role: string } };
@@ -190,26 +242,72 @@ eventRouter.put('/:id', async (req: Request, res: Response, next: NextFunction) 
         next(error);
     }
 });
-
+/**
+ * @swagger
+ * /events/{id}:
+ *   delete:
+ *     summary: Delete an event
+ *     security:
+ *       - bearerAuth: JWT
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: The deleted event
+ */
 eventRouter.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const request = req as Request & { auth: { userName: string; role: string } };
         const { role } = request.auth;
         const id = Number(req.params.id);
-        eventService.deleteEvent(id, role as Role);
+        await eventService.deleteEvent(id, role as Role);
     } catch (error) {
         next(error);
     }
 });
-
+/**
+ * @swagger
+ * /events/{id}/join:
+ *   post:
+ *     summary: Join an event
+ *     security:
+ *       - bearerAuth: JWT
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userName:
+ *                 type: string
+ *                 description: The username of the participant
+ *     responses:
+ *       200:
+ *         description: Successfully joined the event
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Success message
+ */
 eventRouter.post('/:id/join', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log('in join events back end router');
         const { userName } = req.body;
         const eventId = Number(req.params.id);
-        console.log('in join events back end router: ' + eventId);
-        console.log('in join events back end router: ' + userName);
-
         if (!userName) {
             throw new Error('userName is required');
         }
@@ -222,18 +320,44 @@ eventRouter.post('/:id/join', async (req: Request, res: Response, next: NextFunc
         next(error);
     }
 });
-
+/**
+ * @swagger
+ * /events/{id}/participants:
+ *   get:
+ *     summary: Get the number of participants for an event
+ *     security:
+ *       - security: JWT
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: The number of participants
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: integer
+ */
 eventRouter.get('/:id/participants', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const eventId = Number(req.params.id);
         const participantCount = await eventService.getEventParticipants(eventId);
-        res.status(200).json( participantCount );
+        res.status(200).json(participantCount);
     } catch (error) {
         next(error);
     }
 });
 
-
-
+eventRouter.get('/:userName/joined', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const result = await eventService.getEventsOfParticipant(req.params.userName);
+        res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
+});
 
 export { eventRouter };

@@ -8,16 +8,17 @@ import EditEventForm from "@/components/events/editEventForm";
 import Header from "@/components/header";
 import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import useSWR from "swr";
 
 const EditEventPage: React.FC = () => {
   const router = useRouter();
-  const [event, setEvent] = useState<Event | null>(null);
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
   const [isUserLoaded, setIsUserLoaded] = useState(false);
   const { id } = router.query;
+
   const fetchEvent = async () => {
     const response = await EventService.getEventById(Number(id));
-    setEvent(response);
+    return response;
   };
 
   const fetchUser = async () => {
@@ -31,10 +32,14 @@ const EditEventPage: React.FC = () => {
   useEffect(() => {
     fetchUser();
   }, []);
-  useEffect(() => {
-    if (isUserLoaded && id && loggedInUser) fetchEvent();
-  }, [id, isUserLoaded, loggedInUser]);
 
+  const {
+    data: event,
+    isLoading,
+    error,
+  } = useSWR("fetchEvent", async () => fetchEvent());
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
   return (
     event && (
       <>

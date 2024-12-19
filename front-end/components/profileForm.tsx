@@ -4,6 +4,7 @@ import { Category, Profile, StatusMessage, User } from "@/types";
 import CategoryService from "@/services/CategoryService";
 import ProfileService from "@/services/ProfileService";
 import { useRouter } from "next/router";
+import useSWR from "swr";
 
 const ProfileForm: React.FC = () => {
   const router = useRouter();
@@ -19,7 +20,6 @@ const ProfileForm: React.FC = () => {
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
   //category
-  const [categories, setCategories] = useState<Category[]>([]);
   const [categoryName, setCategoryName] = useState("");
 
   const [firstNameError, setFirstNameError] = useState<string>("");
@@ -38,9 +38,19 @@ const ProfileForm: React.FC = () => {
     }
   }, []);
 
-  useEffect(() => {
-    fetchCategories();
-  });
+  const fetchCategories = async () => {
+    const categories = await CategoryService.getAllCategories();
+    return categories;
+  };
+
+  const {
+    data: categories,
+    isLoading,
+    error,
+  } = useSWR("FetchCategories", fetchCategories);
+
+  if (error) return <div>{error}</div>;
+  if (isLoading) return <div>The page is loading</div>;
 
   const validate = (): boolean => {
     let result = true;
@@ -77,26 +87,20 @@ const ProfileForm: React.FC = () => {
     return result;
   };
 
-  const fetchCategories = async () => {
-    try {
-      const categories = await CategoryService.getAllCategories();
-      setCategories(categories);
-    } catch (error) {
-      console.log("Failed to fetch categories");
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validate()) {
       return;
     }
+    console.log(categoryName);
     const profile: Profile = {
       firstName,
       lastName,
       age,
-      category: categories.find((category) => category.name === categoryName),
+      category: categories.find(
+        (category: Category) => category.name === categoryName
+      ),
       location: { street, number, city, country },
     };
     const response = await ProfileService.completeProfile(profile);
@@ -123,6 +127,7 @@ const ProfileForm: React.FC = () => {
                 {statusMessage.message}
               </p>
             ))}
+          <h1>Complete your profile before you can return to the main page!</h1>
           <form onSubmit={handleSubmit} className={styles.form}>
             <div className={styles.div}>
               {statusMessages && (
@@ -252,7 +257,7 @@ const ProfileForm: React.FC = () => {
                 className={styles.input}
                 onChange={(e) => setCategoryName(e.target.value)}
               >
-                {categories.map((category) => (
+                {categories.map((category: Category) => (
                   <option key={category.id} value={category.name}>
                     {category.name}
                   </option>

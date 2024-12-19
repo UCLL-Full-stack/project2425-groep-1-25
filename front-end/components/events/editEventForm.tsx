@@ -23,6 +23,7 @@ const EditEventForm: React.FC<Prop> = ({ event }: Prop) => {
   const [categoryDescription, setCategoryDescription] = useState(
     event.category.description
   );
+  const [statusMessage, setStatusMessage] = useState<string>("");
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
     if (!name) newErrors.name = "Name is required";
@@ -45,6 +46,23 @@ const EditEventForm: React.FC<Prop> = ({ event }: Prop) => {
     }
     if (price < 0) newErrors.price = "Price cannot be negative";
     return newErrors;
+  };
+
+  const handleDelete = async () => {
+    if (event.id) {
+      try {
+        await EventService.deleteEvent(event.id);
+      } catch (error) {
+        if (error instanceof Error) {
+          setStatusMessage(error.message);
+        }
+        return;
+      }
+    }
+
+    setTimeout(() => {
+      router.push("/events");
+    }, 500);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -219,9 +237,23 @@ const EditEventForm: React.FC<Prop> = ({ event }: Prop) => {
             <p className={styles.error}>{errors.categoryDescription}</p>
           )}
         </div>
-        <button type="submit" className={styles.button}>
-          Save
-        </button>
+        <p>
+          <button type="submit" className={styles.button}>
+            Save
+          </button>
+          <button
+            type="button"
+            className={styles.deleteButton}
+            onClick={handleDelete}
+          >
+            Delete
+          </button>
+        </p>
+        {statusMessage && (
+          <>
+            <p className={styles.error}>{statusMessage}</p>
+          </>
+        )}
       </form>
     </>
   );

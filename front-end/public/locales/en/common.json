@@ -3,7 +3,9 @@
   "home": {
     "description": "In the current digital age, it is becoming increasingly more important to get people to connect in the real world again. This is what eventer aims to do. Connect all different kinds of people over common passions, in real life. Users get offered events targeted at their interests and get to experience them in a new social setting."
   },
+  "general.loading": "Loading...",
   "general.error": "An error has occured, please try again later.",
+  "general.loginerror": "Please log in first",
   "login": {
     "title": "Login - Eventer",
     "button": "Login",
@@ -55,13 +57,15 @@
     "details": {
       "loginerror": "Please log in first.",
       "editeventbutton": "Edit event",
+      "price": "Price: ",
       "date": "Date: ",
       "minparticipants": "Minimum participants: ",
       "maxparticipants": "Maximum participants: ",
       "location": "Location: ",
       "category": "Category: ",
       "participate": "Participate",
-      "participants": "Participants count: "
+      "participants": "Participants count: ",
+      "joined": "You joined this event."
     }
   }
 }

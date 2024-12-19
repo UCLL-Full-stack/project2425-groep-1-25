@@ -1,14 +1,13 @@
-import ProfileService from "@/services/ProfileService";
+import EventService from "@/services/EventService";
 import { Event, User } from "@/types";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useTranslation } from "next-i18next";
 import useSWR from "swr";
+import React from "react";
 
-type Prop = {
-  events: Array<Event>;
-};
-
-const EventOverview: React.FC<Prop> = ({ events }: Prop) => {
+const EventOverview: React.FC = () => {
+  const { t } = useTranslation();
   const router = useRouter();
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
   const [isUserLoaded, setIsUserLoaded] = useState(false);
@@ -24,46 +23,72 @@ const EventOverview: React.FC<Prop> = ({ events }: Prop) => {
   useEffect(() => {
     fetchUser();
   }, []);
-
+  const fetchEvents = async () => {
+    const response = await EventService.getAllEvents();
+    return response;
+  };
   const getJoinedEvents = async () => {
-    const data = await ProfileService.getEventsByUserName();
+    const data = await EventService.getEventsByParticipant();
     return data;
   };
-
-  const { data: joinedEvents, isLoading, error } = useSWR("getJoinedEvents", getJoinedEvents);
-
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
-
   const isJoined = (eventId: number) => {
     return joinedEvents.some((event: Event) => event.id === eventId);
   };
+  const {
+    data: joinedEvents,
+    isLoading: isLoadingJoinedEvents,
+    error: errorJoinedEvents,
+  } = useSWR("getJoinedEvents", getJoinedEvents);
 
+  const {
+    data: events,
+    isLoading: isLoadingEvents,
+    error: errorEvents,
+  } = useSWR("fetchEvents", async () => fetchEvents());
+
+  if ((isLoadingEvents || isLoadingJoinedEvents) && loggedInUser)
+    return <div>{t("general.loading")}</div>;
+  if ((errorEvents || errorJoinedEvents) && loggedInUser)
+    return <div>{t("general.error")}</div>;
   return (
     events && (
       <div className="d-flex flex-wrap">
-        {events.map((event) => (
+        {events.map((event: Event) => (
           <div
             key={event.id}
-            className={`event-card p-3 m-2 border rounded ${event.id !== undefined && isJoined(event.id) ? 'joined' : ''}`}
+            className={`event-card p-3 m-2 border rounded ${
+              event.id !== undefined && isJoined(event.id) ? "joined" : ""
+            }`}
             onClick={() => {
               router.push(`/events/${event.id}`);
             }}
           >
             <h2>{event.name}</h2>
-            <p>Date: {new Date(event.date).toLocaleDateString()}</p>
-            <p>Price: {event.price}</p>
-            <p>Min Participants: {event.minParticipants}</p>
-            <p>Max Participants: {event.maxParticipants}</p>
-            {event.location ? (
-              <p>
-                Location: {event.location.street} {event.location.number},{" "}
-                {event.location.city}, {event.location.country}
+            <p>
+              {t("event.details.date")}
+              {new Date(event.date).toLocaleDateString()}
+            </p>
+            <p>
+              {t("event.details.price")} {event.price}
+            </p>
+            <p>
+              {t("event.details.minparticipants")}
+              {event.minParticipants}
+            </p>
+            <p>
+              {t("event.details.maxparticipants")}
+              {event.maxParticipants}
+            </p>
+            <p>
+              {t("event.details.location")} {event.location.street}{" "}
+              {event.location.number}, {event.location.city},{" "}
+              {event.location.country}
+            </p>
+            {event.id !== undefined && isJoined(event.id) && (
+              <p className="joined-text px-4 fs-5 text-red-500">
+                {t("event.details.joined")}
               </p>
-            ) : (
-              <p>Location: Not available</p>
             )}
-            {event.id !== undefined && isJoined(event.id) && <p className="joined-text px-4 fs-5 text-red-500">You have joined this event</p>}
           </div>
         ))}
       </div>

@@ -1,42 +1,64 @@
+import { Category } from '../../model/category';
+import { Location } from '../../model/location';
+import { Profile } from '../../model/profile';
 import { User } from '../../model/user';
 import userDb from '../../repository/user.db';
 import userService from '../../service/user.service';
-import bcrypt, { hash } from 'bcrypt';
+import bcrypt from 'bcrypt';
 
 let mockUserDbGetUserByUserName: jest.Mock;
 let mockUserDbGetUserByEmail: jest.Mock;
 let mockUserDbCreateUser: jest.Mock;
+let mockUserDbGetProfileByUserId: jest.Mock;
 
 beforeEach(() => {
     mockUserDbGetUserByUserName = jest.fn();
     mockUserDbGetUserByEmail = jest.fn();
     mockUserDbCreateUser = jest.fn();
+    mockUserDbGetProfileByUserId = jest.fn();
 });
 
 afterEach(() => {
     jest.clearAllMocks();
 });
 let hashedPassword: string;
-let user: User;
+let testUser: User;
+const testLocation = new Location({
+    id: 1,
+    street: 'Teststraat',
+    number: 1,
+    city: 'Brussel',
+    country: 'Belgium',
+});
+const testCategory = new Category({ id: 1, name: 'Concert', description: 'Concert of artist' });
+
+const testProfile = new Profile({
+    id: 1,
+    firstName: 'Jefke',
+    lastName: 'Testje',
+    age: 1,
+    category: testCategory,
+    location: testLocation,
+});
 beforeAll(async () => {
     hashedPassword = await bcrypt.hash('password', 12);
-    user = new User({
+    testUser = new User({
         id: 1,
         userName: 'Jef',
         email: 'jef@gmail.com',
         role: 'Admin',
         password: hashedPassword,
-        profile: undefined,
+        profile: testProfile,
     });
 });
 
 test('Given a valid userName, when getting user by userName, then user is returned.', async () => {
-    userDb.getUserByUsername = mockUserDbGetUserByUserName.mockReturnValue(user);
+    userDb.getUserByUsername = mockUserDbGetUserByUserName.mockReturnValue(testUser);
 
     const result = await userService.getUserByUserName({ userName: 'Jef' });
 
     expect(mockUserDbGetUserByUserName).toHaveBeenCalledTimes(1);
-    expect(result).toBe(user);
+    expect(result).toBe(testUser);
 });
 
 test('Given a userName that is not in the db, when getting user by userName, then error is thrown.', () => {
@@ -49,7 +71,7 @@ test('Given a userName that is not in the db, when getting user by userName, the
 });
 
 test('Given a user with an already existing userName, when creating new user, then error is thrown', async () => {
-    userDb.getUserByUsername = mockUserDbGetUserByUserName.mockReturnValue(user);
+    userDb.getUserByUsername = mockUserDbGetUserByUserName.mockReturnValue(testUser);
     await expect(
         userService.createUser({
             userName: 'Jef',
@@ -64,7 +86,7 @@ test('Given a user with an already existing userName, when creating new user, th
 
 test('Given a user with an already existing email, when creating new user, then error is thrown', async () => {
     userDb.getUserByUsername = mockUserDbGetUserByUserName.mockReturnValue(null);
-    userDb.getUserByEmail = mockUserDbGetUserByEmail.mockReturnValue(user);
+    userDb.getUserByEmail = mockUserDbGetUserByEmail.mockReturnValue(testUser);
     await expect(
         userService.createUser({
             userName: 'TestUser',
@@ -109,7 +131,7 @@ test('given a completely new user, when creating user, then new user is returned
 });
 
 test('given a valid authenticationInput of a user, when authenticating user, then authenticationResponse is returned', async () => {
-    userDb.getUserByUsername = mockUserDbGetUserByUserName.mockReturnValue(user);
+    userDb.getUserByUsername = mockUserDbGetUserByUserName.mockReturnValue(testUser);
     const result = await userService.authenicate({
         userName: 'Jef',
         password: 'password',
@@ -122,7 +144,7 @@ test('given a valid authenticationInput of a user, when authenticating user, the
 });
 
 test('given invalid password, when authenticating, then error is thrown', async () => {
-    userDb.getUserByUsername = mockUserDbGetUserByUserName.mockReturnValue(user);
+    userDb.getUserByUsername = mockUserDbGetUserByUserName.mockReturnValue(testUser);
 
     await expect(
         userService.authenicate({ userName: 'Jef', password: 'FoutPassword', role: 'Admin' })
@@ -130,4 +152,17 @@ test('given invalid password, when authenticating, then error is thrown', async 
 
     expect(mockUserDbGetUserByUserName).toHaveBeenCalledTimes(1);
     expect(mockUserDbGetUserByUserName).toHaveBeenCalledWith('Jef');
+});
+
+test('given a valid userName, when getting profileIdByUserName, then profileId is returned', async () => {
+    userDb.getProfileByUserId = mockUserDbGetProfileByUserId.mockResolvedValue(testProfile);
+    userDb.getUserByUsername = mockUserDbGetUserByUserName.mockResolvedValue(testUser);
+
+    const result = await userService.getProfileIdByUserName('Jefke');
+
+    expect(result).toBe(1);
+    expect(mockUserDbGetProfileByUserId).toHaveBeenCalledTimes(1);
+    expect(mockUserDbGetProfileByUserId).toHaveBeenCalledWith(1);
+    expect(mockUserDbGetUserByUserName).toHaveBeenCalledTimes(1);
+    expect(mockUserDbGetUserByUserName).toHaveBeenCalledWith('Jefke');
 });

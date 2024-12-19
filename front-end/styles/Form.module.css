@@ -45,7 +45,19 @@
   font-size: 16px;
   cursor: pointer;
 }
-
+.deleteButton {
+  margin-top: 2em;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #ff0000;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+.deleteButton:hover {
+  background-color: #a20000;
+}
 .button:hover {
   background-color: #0056b3;
 }

@@ -3,7 +3,9 @@
   "home": {
     "description": "In het huidige digitale tijdperk wordt het steeds belangrijker om mensen weer verbinding te laten maken in de echte wereld. Dit is wat eventer wil doen. Verbind allerlei verschillende soorten mensen via gemeenschappelijke passies, in het echte leven. Gebruikers krijgen evenementen aangeboden die zijn afgestemd op hun interesses en kunnen deze ervaren in een nieuwe sociale setting."
   },
+  "general.loading": "Laden...",
   "general.error": "Er is een fout opgetreden, probeer later opnieuw.",
+  "general.loginerror": "Meld je eerst aan",
   "login": {
     "title": "Aanmelden - Eventer",
     "button": "Meld aan",
@@ -12,7 +14,7 @@
       "name": "Naam is vereist.",
       "password": "Wachtwoord is vereist."
     },
-    "label": { "name": "Naam:", "password": "Wachtwoord:" }
+    "label": { "username": "Naam:", "password": "Wachtwoord:" }
   },
   "register": {
     "title": "Registreren - Eventer",
@@ -55,13 +57,15 @@
     "details": {
       "loginerror": "Meld eerst aan.",
       "editeventbutton": "wijzig evenement",
+      "price": "Prijs: ",
       "date": "Datum: ",
       "minparticipants": "Minimum deelnemers: ",
       "maxparticipants": "Maximum deelnemers: ",
       "location": "Locatie: ",
       "category": "Categorie: ",
       "participate": "Schrijf je in",
-      "participants": "Hoeveelheid deelnemers:"
+      "participants": "Hoeveelheid deelnemers:",
+      "joined": "Je bent ingeschreven voor dit evenement."
     }
   }
 }

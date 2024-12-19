@@ -112,6 +112,24 @@ const main = async () => {
             user: { connect: { id: admin.id } },
         },
     });
+    const mod = await prisma.user.create({
+        data: {
+            userName: 'mod',
+            email: 'mod@gmail.com',
+            role: 'Mod',
+            password: await bcrypt.hash('mod123', 12),
+        },
+    });
+    const profileMod = await prisma.profile.create({
+        data: {
+            firstName: 'mod',
+            lastName: 'mod',
+            age: 18,
+            location: { connect: { id: locationJefke.id } },
+            category: { connect: { id: concertCategory.id } },
+            user: { connect: { id: mod.id } },
+        },
+    });
 };
 (async () => {
     try {

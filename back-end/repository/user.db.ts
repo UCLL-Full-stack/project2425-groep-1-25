@@ -1,3 +1,4 @@
+import { Profile } from '../model/profile';
 import { User } from '../model/user';
 import database from './database';
 
@@ -53,9 +54,13 @@ const getProfileByUserId = async (userId: number) => {
         where: {
             userId: userId,
         },
+        include: {
+            location: true,
+            category: true,
+        },
     });
 
-    return profile;
+    return profile ? Profile.from(profile) : null;
 };
 
 export default { getAllUsers, getUserByUsername, getUserByEmail, createUser, getProfileByUserId };

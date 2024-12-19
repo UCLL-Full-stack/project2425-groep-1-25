@@ -19,8 +19,6 @@
  */
 
 import express, { NextFunction, Request, Response } from 'express';
-import eventService from '../service/event.service';
-import { EventInput } from '../types';
 import categoryService from '../service/category.service';
 
 const categoryRouter = express.Router();
@@ -30,6 +28,8 @@ const categoryRouter = express.Router();
  * /categories:
  *   get:
  *     summary: Get all categories
+ *     security:
+ *       - bearerAuth: JWT
  *     responses:
  *       200:
  *         description: A list of categories
