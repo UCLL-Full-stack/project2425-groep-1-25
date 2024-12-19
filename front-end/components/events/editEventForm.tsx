@@ -52,17 +52,13 @@ const EditEventForm: React.FC<Prop> = ({ event }: Prop) => {
     if (event.id) {
       try {
         await EventService.deleteEvent(event.id);
+        router.push("/events");
       } catch (error) {
         if (error instanceof Error) {
           setStatusMessage(error.message);
         }
-        return;
       }
     }
-
-    setTimeout(() => {
-      router.push("/events");
-    }, 500);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
