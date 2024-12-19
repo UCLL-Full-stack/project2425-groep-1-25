@@ -23,7 +23,32 @@ const main = async () => {
         },
     });
 
+    const locationEvent2 = await prisma.location.create({
+        data: {
+            street: 'Ijsbaan Leuven',
+            number: 1,
+            city: 'Leuven',
+            country: 'Belgium',
+        },
+    });
+
+    const locationEvent3 = await prisma.location.create({
+        data: {
+            street: 'Wienerstrasse',
+            number: 1,
+            city: 'Salzburg',
+            country: 'Austria',
+        },
+    });
+
     const concertCategory = await prisma.category.create({
+        data: {
+            name: 'Concert',
+            description: 'Concert of artist',
+        },
+    });
+
+    const artCategory = await prisma.category.create({
         data: {
             name: 'Concert',
             description: 'Concert of artist',
@@ -57,6 +82,12 @@ const main = async () => {
             description: 'A techno event, perfect for people that like techno',
         },
     });
+    const sportCategory = await prisma.category.create({
+        data: {
+            name: 'Sport',
+            description: 'Sport event',
+        },
+    });
     const event1 = await prisma.event.create({
         data: {
             name: 'Fred Again..',
@@ -75,8 +106,8 @@ const main = async () => {
             price: 10,
             minParticipants: 10,
             maxParticipants: 20,
-            location: { connect: { id: locationEvent1.id } },
-            category: { connect: { id: concertCategory.id } },
+            location: { connect: { id: locationEvent2.id } },
+            category: { connect: { id: sportCategory.id } },
         },
     });
     const event3 = await prisma.event.create({
@@ -87,7 +118,7 @@ const main = async () => {
             minParticipants: 5,
             maxParticipants: 10,
             location: { connect: { id: locationEvent1.id } },
-            category: { connect: { id: concertCategory.id } },
+            category: { connect: { id: artCategory.id } },
         },
     });
     const event4 = await prisma.event.create({
@@ -97,8 +128,8 @@ const main = async () => {
             price: 2000,
             minParticipants: 5,
             maxParticipants: 10,
-            location: { connect: { id: locationEvent1.id } },
-            category: { connect: { id: concertCategory.id } },
+            location: { connect: { id: locationEvent3.id } },
+            category: { connect: { id: sportCategory.id } },
         },
     });
     const locationJefke = await prisma.location.create({
